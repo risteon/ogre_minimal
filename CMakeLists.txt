@@ -34,7 +34,13 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build)
 #-------------------
 # Executable
 #-------------------
-add_executable(${PROJECT_NAME_STR} src/main.cpp)
+add_executable(${PROJECT_NAME_STR}
+        src/main.cpp
+        src/ObjectManager.cpp
+        src/SimpleFrameListener.cpp
+        src/SimpleKeyListener.cpp
+        src/SimpleMouseListener.cpp
+        )
 target_link_libraries(${PROJECT_NAME_STR} ${OGRE_LIBRARIES} ${OIS_LIBRARIES})
 
 # Enable C++11 support in GNU-Compiler

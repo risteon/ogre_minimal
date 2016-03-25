@@ -7,74 +7,19 @@ Eihort porting: stoneCold
 ---------------------------------------------------------------- 
 */ 
  
-#define OIS_DYNAMIC_LIB
- 
+// OGRE
 #include <OGRE/Ogre.h>
-#include <OGRE/OgreFrameListener.h> 
-#include <OIS/OIS.h>
- 
-using namespace Ogre; 
- 
-////////////////////////////////////////////////////////////////////////// 
-// class SimpleFrameListener 
-////////////////////////////////////////////////////////////////////////// 
-class SimpleFrameListener : public FrameListener 
-{ 
-public: 
-    SimpleFrameListener(OIS::Keyboard* keyboard, OIS::Mouse* mouse) 
-    { 
-        mKeyboard = keyboard; 
-        mMouse = mouse; 
-    } 
-    // This gets called before the next frame is beeing rendered.
-    bool frameStarted(const FrameEvent& evt) 
-    {
-        //update the input devices
-        mKeyboard->capture();
-        mMouse->capture();
- 
-        //exit if key KC_ESCAPE pressed 
-        if(mKeyboard->isKeyDown(OIS::KC_ESCAPE)) 
-            return false; 
- 
-        return true; 
-    } 
-    // This gets called at the end of a frame.
-    bool frameEnded(const FrameEvent& evt) 
-    { 
-        return true; 
-    } 
-private: 
-    OIS::Keyboard* mKeyboard; 
-    OIS::Mouse* mMouse; 
-}; 
- 
-////////////////////////////////////////////////////////////////////////// 
-// class SimpleKeyListener 
-////////////////////////////////////////////////////////////////////////// 
-class SimpleKeyListener : public OIS::KeyListener 
-{ 
-public: 
-    bool keyPressed(const OIS::KeyEvent& e){ return true; }
- 
-    bool keyReleased(const OIS::KeyEvent& e){ return true; }
-};
- 
-////////////////////////////////////////////////////////////////////////// 
-// class SimpleMouseListener 
-////////////////////////////////////////////////////////////////////////// 
-class SimpleMouseListener : public OIS::MouseListener
-{
-public: 
-    bool mouseMoved(const OIS::MouseEvent& e){ return true; }
- 
-    bool mousePressed(const OIS::MouseEvent& e, OIS::MouseButtonID id){ return true; }
- 
-    bool mouseReleased(const OIS::MouseEvent& e, OIS::MouseButtonID id){ return true; }
-};
 
+// own
+#include "SimpleFrameListener.h"
+#include "SimpleKeyListener.h"
+#include "SimpleMouseListener.h"
+#include "ObjectManager.h"
+
+using namespace Ogre;
+ 
 /// Initialize renderer
-bool manualInitialize(const String &desiredRenderer)
+bool manualInitialize(const String& desiredRenderer)
 {
   RenderSystem* renderSystem;
   bool ok = false;
@@ -115,11 +60,11 @@ bool manualInitialize(const String &desiredRenderer)
 // main 
 ////////////////////////////////////////////////////////////////////////// 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-  #define WIN32_LEAN_AND_MEAN
-  #include "windows.h"
-  INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR strCmdLine, INT)
+#define WIN32_LEAN_AND_MEAN
+#include "windows.h"
+INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR strCmdLine, INT)
 #else
-  int main(int argc, char **argv)
+int main(int argc, char **argv)
 #endif
 {
   //-----------------------------------------------------
@@ -163,14 +108,14 @@ bool manualInitialize(const String &desiredRenderer)
   //-----------------------------------------------------
   // 3 Configures the application and creates the window
   //-----------------------------------------------------
-  /*if(!root->showConfigDialog())
+  if(!root->showConfigDialog())
   {
-    //Ogre
     delete root;
     return false; // Exit the application on cancel
-  }*/
-  if (!manualInitialize("OpenGL"))
-    std::cout <<"meeeeh..." <<std::endl;
+  }
+
+  //if (!manualInitialize("OpenGL"))
+  //  std::cout <<"meeeeh..." <<std::endl;
 
   RenderWindow* window = root->initialise(true, "Simple Ogre App");
   std::cout <<"test" <<std::endl;
@@ -242,9 +187,13 @@ bool manualInitialize(const String &desiredRenderer)
   // 9 clean
   //----------------------------------------------------
   //OIS
-  inputManager->destroyInputObject(mouse); mouse = 0;
-  inputManager->destroyInputObject(keyboard); keyboard = 0;
-  OIS::InputManager::destroyInputSystem(inputManager); inputManager = 0;
+  inputManager->destroyInputObject(mouse);
+  mouse = nullptr;
+  inputManager->destroyInputObject(keyboard);
+  keyboard = nullptr;
+  OIS::InputManager::destroyInputSystem(inputManager);
+  inputManager = nullptr;
+
   //listeners
   delete frameListener;
   delete mouseListener;
